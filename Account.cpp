@@ -1,7 +1,31 @@
 #include "Account.h"
 #include "client.h"
+#include "Savingsaccount.h"
+#include <iostream>
+#include <string>
+#include <fstream>
+
+
 
 int Account::nextId = 1;
+
+void Account::LoadBase(ifstream& in, vector<Client*>& clients)
+{
+    in >> id >> balance;
+    in >> ws;
+    string ownerName;
+    getline(in, ownerName);
+    owner = nullptr;
+    for (Client* client : clients)
+    {
+        if (client->getName() == ownerName)
+        {
+            owner = client;
+            break;
+        }
+    }
+}
+
 
 Account::Account(double balance, Client* owner) : id(nextId++), balance(balance), owner(owner) {}
 
@@ -19,7 +43,7 @@ double Account::getBalance() const
 
 string Account::getOwnerName() const 
 {
-    return owner ? owner->getName() : "ÕÂËÁ‚ÂÒÚÌÓ";
+    return owner ? owner->getName() : "–ù–µ–∏–∑–≤–µ—Å—Ç–Ω–æ";
 }
 
 bool Account::deposit(double amount) 
@@ -34,28 +58,4 @@ bool Account::withdraw(double amount)
     if (amount <= 0 || amount > balance) return false;
     balance -= amount;
     return true;
-}
-
-void Account::save(ofstream& out) const 
-{
-    out << id << " " << balance << " ";
-    out << (owner ? owner->getName() : "") << " ";
-}
-
-void Account::load(ifstream& in, vector<Client*>& clients) 
-{
-    in >> balance;
-    string ownerName;
-    in.ignore(); 
-    getline(in, ownerName);
-
-    owner = nullptr;
-    for (size_t i = 0; i < clients.size(); i++) 
-    {
-        if (clients[i]->getName() == ownerName) 
-        {
-            owner = clients[i];
-            break;
-        }
-    }
 }
