@@ -1,0 +1,8 @@
+3
+Alexey
+Ivan
+Sergey
+3
+S 1 3360 Ivan 0.05
+S 2 3801 Sergey 0.05
+C 3 5236 Alexey 0.02 10000
