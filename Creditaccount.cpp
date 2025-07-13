@@ -1,4 +1,5 @@
 #include "creditaccount.h"
+#include "client.h"
 
 CreditAccount::CreditAccount(double balance, Client* owner, double commissionRate, double creditLimit) : Account(balance, owner), commissionRate(commissionRate), creditLimit(creditLimit) {}
 
@@ -19,18 +20,26 @@ void CreditAccount::monthlyUpdate()
 
 string CreditAccount::getType() const 
 {
-    return "Êğåäèòíûé";
+    return "ĞšÑ€ĞµĞ´Ğ¸Ñ‚Ğ½Ñ‹Ğ¹";
 }
 
 void CreditAccount::save(ofstream& out) const 
 {
-    out << "C ";
-    Account::save(out);
-    out << commissionRate << " " << creditLimit << endl;
+    out << "C " << id << " " << balance << " " << owner->getName() << " "
+        << commissionRate << " " << creditLimit << "\n"; // Ğ˜Ğ—ĞœĞ•ĞĞ•ĞĞ
 }
 
 void CreditAccount::load(ifstream& in, vector<Client*>& clients) 
 {
-    Account::load(in, clients);
-    in >> commissionRate >> creditLimit;
+    in >> id >> balance;
+    string ownerName;
+    in >> ownerName >> commissionRate >> creditLimit;
+
+    owner = nullptr;
+    for (Client* c : clients) {
+        if (c->getName() == ownerName) {
+            owner = c;
+            break;
+        }
+    }
 }
