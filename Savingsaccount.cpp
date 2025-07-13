@@ -1,4 +1,5 @@
 #include "savingsaccount.h"
+#include "client.h"
 
 SavingsAccount::SavingsAccount(double balance, Client* owner, double interestRate) : Account(balance, owner), interestRate(interestRate) {}
 
@@ -9,18 +10,25 @@ void SavingsAccount::monthlyUpdate()
 
 string SavingsAccount::getType() const 
 {
-    return "Накопительный";
+    return "РќР°РєРѕРїРёС‚РµР»СЊРЅС‹Р№";
 }
 
 void SavingsAccount::save(ofstream& out) const 
 {
-    out << "S ";
-    Account::save(out);
-    out << interestRate << endl;
+    out << "S " << id << " " << balance << " " << owner->getName() << " " << interestRate << "\n"; // РР—РњР•РќР•РќРћ
 }
 
 void SavingsAccount::load(ifstream& in, vector<Client*>& clients) 
 {
-    Account::load(in, clients);
-    in >> interestRate;
+    in >> id >> balance;
+    string ownerName;
+    in >> ownerName >> interestRate;
+
+    owner = nullptr;
+    for (Client* c : clients) {
+        if (c->getName() == ownerName) {
+            owner = c;
+            break;
+        }
+    }
 }
