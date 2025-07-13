@@ -9,12 +9,15 @@ class Client;
 
 class Account 
 {
-public:
+protected:
     int id;
     double balance;
     Client* owner;
-    static int nextId;
+    void LoadBase(ifstream& in, vector<Client*>& clients);
+
 public:
+
+    static int nextId;
     Account(double balance, Client* owner);
     virtual ~Account();
 
@@ -22,10 +25,10 @@ public:
     double getBalance() const;
     string getOwnerName() const;
 
-    virtual bool deposit(double amount);
+    bool deposit(double amount);
     virtual bool withdraw(double amount);
     virtual void monthlyUpdate() = 0;
     virtual string getType() const = 0;
-    virtual void save(ofstream& out) const;
-    virtual void load(ifstream& in, vector<Client*>& clients);
+    virtual void save(ofstream& out) const = 0;
+    virtual void load(ifstream& in, vector<Client*>& clients) = 0;
 };
