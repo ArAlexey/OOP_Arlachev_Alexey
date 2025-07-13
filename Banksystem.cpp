@@ -32,7 +32,7 @@ void BankSystem::saveToFile(const string& filename)
     ofstream out(filename);
     if (!out)
     {
-        cerr << "Îøèáêà îòêðûòèÿ ôàéëà äëÿ çàïèñè\n";
+        cerr << "ÐžÑˆÐ¸Ð±ÐºÐ° Ð¾Ñ‚ÐºÑ€Ñ‹Ñ‚Ð¸Ñ Ñ„Ð°Ð¹Ð»Ð° Ð´Ð»Ñ Ð·Ð°Ð¿Ð¸ÑÐ¸\n";
         return;
     }
 
@@ -51,94 +51,90 @@ void BankSystem::saveToFile(const string& filename)
     out.close();
 }
 
-
 void BankSystem::loadFromFile(const string& filename)
 {
     ifstream in(filename);
-    if (!in) 
+    if (!in)
     {
-        cerr << "Íåò ñîõðàíåííûõ äàííûõ\n";
+        cerr << "ÐÐµÑ‚ ÑÐ¾Ñ…Ñ€Ð°Ð½ÐµÐ½Ð½Ñ‹Ñ… Ð´Ð°Ð½Ð½Ñ‹Ñ…\n";
         return;
     }
 
+    // ÐžÑ‡Ð¸Ñ‰Ð°ÐµÐ¼ Ñ‚ÐµÐºÑƒÑ‰Ð¸Ðµ Ð´Ð°Ð½Ð½Ñ‹Ðµ
     for (size_t i = 0; i < accounts.size(); i++) delete accounts[i];
     for (size_t i = 0; i < clients.size(); i++) delete clients[i];
     clients.clear();
     accounts.clear();
 
+    // Ð—Ð°Ð³Ñ€ÑƒÐ¶Ð°ÐµÐ¼ ÐºÐ»Ð¸ÐµÐ½Ñ‚Ð¾Ð²
     int clientCount;
     in >> clientCount;
-    in.ignore(); 
-    for (int i = 0; i < clientCount; ++i) 
+    in.ignore(); // ÐŸÑ€Ð¾Ð¿ÑƒÑÐºÐ°ÐµÐ¼ Ð¾ÑÑ‚Ð°Ð²ÑˆÐ¸Ð¹ÑÑ ÑÐ¸Ð¼Ð²Ð¾Ð» Ð½Ð¾Ð²Ð¾Ð¹ ÑÑ‚Ñ€Ð¾ÐºÐ¸
+    for (int i = 0; i < clientCount; ++i)
     {
         string name;
         getline(in, name);
-        if (!name.empty()) 
-        {
-            clients.push_back(new Client(name));
-        }
+        clients.push_back(new Client(name));
     }
 
+    // Ð—Ð°Ð³Ñ€ÑƒÐ¶Ð°ÐµÐ¼ ÑÑ‡ÐµÑ‚Ð°
     int accountCount;
     in >> accountCount;
-    in.ignore(); 
     int maxId = 0;
-    for (int i = 0; i < accountCount; ++i) {
+    for (int i = 0; i < accountCount; ++i)
+    {
         char type;
         in >> type;
-        in.ignore();
 
         Account* account = nullptr;
-        if (type == 'S') 
+        if (type == 'S')
         {
             account = new SavingsAccount(0, nullptr);
         }
-        else if (type == 'C') 
+        else if (type == 'C')
         {
             account = new CreditAccount(0, nullptr);
         }
 
-        if (account) 
+        if (account)
         {
             account->load(in, clients);
             accounts.push_back(account);
-            if (account->getId() > maxId) 
-            {
-                maxId = account->getId();
-            }
+        }
+        if (account->getId() > maxId)
+        {
+            maxId = account->getId();
         }
     }
-
-    if (maxId > 0) 
+    if (maxId > 0)
     {
         Account::nextId = maxId + 1;
     }
-
     in.close();
-    cout << "Äàííûå óñïåøíî çàãðóæåíû\n";
+    cout << "Ð”Ð°Ð½Ð½Ñ‹Ðµ ÑƒÑÐ¿ÐµÑˆÐ½Ð¾ Ð·Ð°Ð³Ñ€ÑƒÐ¶ÐµÐ½Ñ‹\n";
 }
 
 
 void BankSystem::createClient() 
 {
-    cout << "Ââåäèòå èìÿ êëèåíòà: ";
+    cout << "Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ Ð¸Ð¼Ñ ÐºÐ»Ð¸ÐµÐ½Ñ‚Ð°: ";
     string name;
-    cin.ignore();
+    //cin.ignore();
     getline(cin, name);
 
     clients.push_back(new Client(name));
-    cout << "Êëèåíò óñïåøíî ñîçäàí\n";
+    cout << "ÐšÐ»Ð¸ÐµÐ½Ñ‚ ÑƒÑÐ¿ÐµÑˆÐ½Ð¾ ÑÐ¾Ð·Ð´Ð°Ð½\n";
 }
 
 void BankSystem::createSavingsAccount() 
 {
     if (clients.empty()) 
     {
-        cout << "Íåò äîñòóïíûõ êëèåíòîâ. Ñíà÷àëà ñîçäàéòå êëèåíòà.\n";
+        cout << "ÐÐµÑ‚ Ð´Ð¾ÑÑ‚ÑƒÐ¿Ð½Ñ‹Ñ… ÐºÐ»Ð¸ÐµÐ½Ñ‚Ð¾Ð². Ð¡Ð½Ð°Ñ‡Ð°Ð»Ð° ÑÐ¾Ð·Ð´Ð°Ð¹Ñ‚Ðµ ÐºÐ»Ð¸ÐµÐ½Ñ‚Ð°.\n";
         return;
     }
 
-    cout << "Âûáåðèòå êëèåíòà:\n";
+    cout << "Ð’Ñ‹Ð±ÐµÑ€Ð¸Ñ‚Ðµ ÐºÐ»Ð¸ÐµÐ½Ñ‚Ð°:\n";
     for (size_t i = 0; i < clients.size(); ++i) 
     {
         cout << i + 1 << ". " << clients[i]->getName() << endl;
@@ -149,33 +145,33 @@ void BankSystem::createSavingsAccount()
 
     if (clientChoice < 1 || clientChoice >(int)clients.size()) 
     {
-        cout << "Íåâåðíûé âûáîð êëèåíòà\n";
+        cout << "ÐÐµÐ²ÐµÑ€Ð½Ñ‹Ð¹ Ð²Ñ‹Ð±Ð¾Ñ€ ÐºÐ»Ð¸ÐµÐ½Ñ‚Ð°\n";
         return;
     }
 
-    cout << "Ââåäèòå íà÷àëüíûé äåïîçèò: ";
+    cout << "Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ Ð½Ð°Ñ‡Ð°Ð»ÑŒÐ½Ñ‹Ð¹ Ð´ÐµÐ¿Ð¾Ð·Ð¸Ñ‚: ";
     double amount;
     cin >> amount;
 
     if (amount <= 0) 
     {
-        cout << "Íåâåðíàÿ ñóììà\n";
+        cout << "ÐÐµÐ²ÐµÑ€Ð½Ð°Ñ ÑÑƒÐ¼Ð¼Ð°\n";
         return;
     }
 
     accounts.push_back(new SavingsAccount(amount, clients[clientChoice - 1]));
-    cout << "Íàêîïèòåëüíûé ñ÷åò óñïåøíî ñîçäàí. ID ñ÷åòà: " << accounts.back()->getId() << endl;
+    cout << "ÐÐ°ÐºÐ¾Ð¿Ð¸Ñ‚ÐµÐ»ÑŒÐ½Ñ‹Ð¹ ÑÑ‡ÐµÑ‚ ÑƒÑÐ¿ÐµÑˆÐ½Ð¾ ÑÐ¾Ð·Ð´Ð°Ð½. ID ÑÑ‡ÐµÑ‚Ð°: " << accounts.back()->getId() << endl;
 }
 
 void BankSystem::createCreditAccount() 
 {
     if (clients.empty()) 
     {
-        cout << "Íåò äîñòóïíûõ êëèåíòîâ. Ñíà÷àëà ñîçäàéòå êëèåíòà.\n";
+        cout << "ÐÐµÑ‚ Ð´Ð¾ÑÑ‚ÑƒÐ¿Ð½Ñ‹Ñ… ÐºÐ»Ð¸ÐµÐ½Ñ‚Ð¾Ð². Ð¡Ð½Ð°Ñ‡Ð°Ð»Ð° ÑÐ¾Ð·Ð´Ð°Ð¹Ñ‚Ðµ ÐºÐ»Ð¸ÐµÐ½Ñ‚Ð°.\n";
         return;
     }
 
-    cout << "Âûáåðèòå êëèåíòà:\n";
+    cout << "Ð’Ñ‹Ð±ÐµÑ€Ð¸Ñ‚Ðµ ÐºÐ»Ð¸ÐµÐ½Ñ‚Ð°:\n";
     for (size_t i = 0; i < clients.size(); ++i) 
     {
         cout << i + 1 << ". " << clients[i]->getName() << endl;
@@ -186,70 +182,70 @@ void BankSystem::createCreditAccount()
 
     if (clientChoice < 1 || clientChoice >(int)clients.size()) 
     {
-        cout << "Íåâåðíûé âûáîð êëèåíòà\n";
+        cout << "ÐÐµÐ²ÐµÑ€Ð½Ñ‹Ð¹ Ð²Ñ‹Ð±Ð¾Ñ€ ÐºÐ»Ð¸ÐµÐ½Ñ‚Ð°\n";
         return;
     }
 
-    cout << "Ââåäèòå íà÷àëüíûé áàëàíñ: ";
+    cout << "Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ Ð½Ð°Ñ‡Ð°Ð»ÑŒÐ½Ñ‹Ð¹ Ð±Ð°Ð»Ð°Ð½Ñ: ";
     double amount;
     cin >> amount;
 
     accounts.push_back(new CreditAccount(amount, clients[clientChoice - 1]));
-    cout << "Êðåäèòíûé ñ÷åò óñïåøíî ñîçäàí. ID ñ÷åòà: "
+    cout << "ÐšÑ€ÐµÐ´Ð¸Ñ‚Ð½Ñ‹Ð¹ ÑÑ‡ÐµÑ‚ ÑƒÑÐ¿ÐµÑˆÐ½Ð¾ ÑÐ¾Ð·Ð´Ð°Ð½. ID ÑÑ‡ÐµÑ‚Ð°: "
         << accounts.back()->getId() << endl;
 }
 
 void BankSystem::deposit() 
 {
-    cout << "Ââåäèòå íîìåð ñ÷åòà: ";
+    cout << "Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ Ð½Ð¾Ð¼ÐµÑ€ ÑÑ‡ÐµÑ‚Ð°: ";
     int id;
     cin >> id;
 
     Account* account = findAccount(id);
     if (!account) 
     {
-        cout << "Ñ÷åò íå íàéäåí\n";
+        cout << "Ð¡Ñ‡ÐµÑ‚ Ð½Ðµ Ð½Ð°Ð¹Ð´ÐµÐ½\n";
         return;
     }
 
-    cout << "Ââåäèòå ñóììó äëÿ ïîïîëíåíèÿ: ";
+    cout << "Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ ÑÑƒÐ¼Ð¼Ñƒ Ð´Ð»Ñ Ð¿Ð¾Ð¿Ð¾Ð»Ð½ÐµÐ½Ð¸Ñ: ";
     double amount;
     cin >> amount;
 
     if (account->deposit(amount)) 
     {
-        cout << "Ïîïîëíåíèå óñïåøíî. Íîâûé áàëàíñ: " << account->getBalance() << endl;
+        cout << "ÐŸÐ¾Ð¿Ð¾Ð»Ð½ÐµÐ½Ð¸Ðµ ÑƒÑÐ¿ÐµÑˆÐ½Ð¾. ÐÐ¾Ð²Ñ‹Ð¹ Ð±Ð°Ð»Ð°Ð½Ñ: " << account->getBalance() << endl;
     }
     else 
     {
-        cout << "Íåâåðíàÿ ñóììà äëÿ ïîïîëíåíèÿ\n";
+        cout << "ÐÐµÐ²ÐµÑ€Ð½Ð°Ñ ÑÑƒÐ¼Ð¼Ð° Ð´Ð»Ñ Ð¿Ð¾Ð¿Ð¾Ð»Ð½ÐµÐ½Ð¸Ñ\n";
     }
 }
 
 void BankSystem::withdraw() 
 {
-    cout << "Ââåäèòå íîìåð ñ÷åòà: ";
+    cout << "Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ Ð½Ð¾Ð¼ÐµÑ€ ÑÑ‡ÐµÑ‚Ð°: ";
     int id;
     cin >> id;
 
     Account* account = findAccount(id);
     if (!account) 
     {
-        cout << "Ñ÷åò íå íàéäåí\n";
+        cout << "Ð¡Ñ‡ÐµÑ‚ Ð½Ðµ Ð½Ð°Ð¹Ð´ÐµÐ½\n";
         return;
     }
 
-    cout << "Ââåäèòå ñóììó äëÿ ñíÿòèÿ: ";
+    cout << "Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ ÑÑƒÐ¼Ð¼Ñƒ Ð´Ð»Ñ ÑÐ½ÑÑ‚Ð¸Ñ: ";
     double amount;
     cin >> amount;
 
     if (account->withdraw(amount)) 
     {
-        cout << "Ñíÿòèå óñïåøíî. Íîâûé áàëàíñ: " << account->getBalance() << endl;
+        cout << "Ð¡Ð½ÑÑ‚Ð¸Ðµ ÑƒÑÐ¿ÐµÑˆÐ½Ð¾. ÐÐ¾Ð²Ñ‹Ð¹ Ð±Ð°Ð»Ð°Ð½Ñ: " << account->getBalance() << endl;
     }
     else 
     {
-        cout << "Íåâåðíàÿ ñóììà äëÿ ñíÿòèÿ èëè íåäîñòàòî÷íî ñðåäñòâ\n";
+        cout << "ÐÐµÐ²ÐµÑ€Ð½Ð°Ñ ÑÑƒÐ¼Ð¼Ð° Ð´Ð»Ñ ÑÐ½ÑÑ‚Ð¸Ñ Ð¸Ð»Ð¸ Ð½ÐµÐ´Ð¾ÑÑ‚Ð°Ñ‚Ð¾Ñ‡Ð½Ð¾ ÑÑ€ÐµÐ´ÑÑ‚Ð²\n";
     }
 }
 
@@ -257,14 +253,14 @@ void BankSystem::viewAllAccounts() const
 {
     if (accounts.empty()) 
     {
-        cout << "Íåò äîñòóïíûõ ñ÷åòîâ\n";
+        cout << "ÐÐµÑ‚ Ð´Ð¾ÑÑ‚ÑƒÐ¿Ð½Ñ‹Ñ… ÑÑ‡ÐµÑ‚Ð¾Ð²\n";
         return;
     }
 
-    cout << "Âñå ñ÷åòà:\n";
+    cout << "Ð’ÑÐµ ÑÑ‡ÐµÑ‚Ð°:\n";
     for (size_t i = 0; i < accounts.size(); i++) 
     {
-        cout << "Íîìåð ñ÷åòà: " << accounts[i]->getId() << ", Òèï: " << accounts[i]->getType() << ", Âëàäåëåö: " << accounts[i]->getOwnerName() << ", Áàëàíñ: " << accounts[i]->getBalance() << endl;
+        cout << "ÐÐ¾Ð¼ÐµÑ€ ÑÑ‡ÐµÑ‚Ð°: " << accounts[i]->getId() << ", Ð¢Ð¸Ð¿: " << accounts[i]->getType() << ", Ð’Ð»Ð°Ð´ÐµÐ»ÐµÑ†: " << accounts[i]->getOwnerName() << ", Ð‘Ð°Ð»Ð°Ð½Ñ: " << accounts[i]->getBalance() << endl;
     }
 }
 
@@ -274,12 +270,12 @@ void BankSystem::monthlyUpdate()
     {
         accounts[i]->monthlyUpdate();
     }
-    cout << "Åæåìåñÿ÷íîå îáíîâëåíèå âûïîëíåíî äëÿ âñåõ ñ÷åòîâ\n";
+    cout << "Ð•Ð¶ÐµÐ¼ÐµÑÑÑ‡Ð½Ð¾Ðµ Ð¾Ð±Ð½Ð¾Ð²Ð»ÐµÐ½Ð¸Ðµ Ð²Ñ‹Ð¿Ð¾Ð»Ð½ÐµÐ½Ð¾ Ð´Ð»Ñ Ð²ÑÐµÑ… ÑÑ‡ÐµÑ‚Ð¾Ð²\n";
 }
 
 void BankSystem::findClientAccounts() const 
 {
-    cout << "Ââåäèòå èìÿ êëèåíòà: ";
+    cout << "Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ Ð¸Ð¼Ñ ÐºÐ»Ð¸ÐµÐ½Ñ‚Ð°: ";
     string name;
     cin.ignore();
     getline(cin, name);
@@ -289,16 +285,16 @@ void BankSystem::findClientAccounts() const
     {
         if (accounts[i]->getOwnerName() == name) 
         {
-            cout << "Íîìåð ñ÷åòà: " << accounts[i]->getId()
-                << ", Òèï: " << accounts[i]->getType()
-                << ", Áàëàíñ: " << accounts[i]->getBalance() << endl;
+            cout << "ÐÐ¾Ð¼ÐµÑ€ ÑÑ‡ÐµÑ‚Ð°: " << accounts[i]->getId()
+                << ", Ð¢Ð¸Ð¿: " << accounts[i]->getType()
+                << ", Ð‘Ð°Ð»Ð°Ð½Ñ: " << accounts[i]->getBalance() << endl;
             found = true;
         }
     }
 
     if (!found) 
     {
-        cout << "Íå íàéäåíî ñ÷åòîâ äëÿ êëèåíòà: " << name << endl;
+        cout << "ÐÐµ Ð½Ð°Ð¹Ð´ÐµÐ½Ð¾ ÑÑ‡ÐµÑ‚Ð¾Ð² Ð´Ð»Ñ ÐºÐ»Ð¸ÐµÐ½Ñ‚Ð°: " << name << endl;
     }
 }
 
